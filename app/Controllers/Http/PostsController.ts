@@ -33,5 +33,13 @@ export default class PostsController {
         return; //401
     }
 
-    public async store({auth, request}: HttpContextContract) {}
+    public async store({auth, request, response}: HttpContextContract) {
+        const user = await auth.authenticate();
+        const post = new Post();
+        post.title = request.input('title');
+        post.content = request.input('content');
+        post.forumId = request.input('forum');
+        await user.related('posts').save(post);
+        return post
+    }
 }
